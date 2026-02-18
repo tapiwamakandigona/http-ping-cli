@@ -1,0 +1,12 @@
+{
+  "name": "http-ping-cli",
+  "version": "1.0.0",
+  "description": "Simple HTTP endpoint health checker and response time monitor",
+  "bin": { "http-ping": "dist/index.js" },
+  "main": "dist/index.js",
+  "scripts": { "build": "tsc", "test": "echo ok" },
+  "keywords": ["http", "ping", "health-check", "monitoring", "uptime", "cli"],
+  "author": "Tapiwa Makandigona",
+  "license": "MIT",
+  "devDependencies": { "typescript": "^5.3.0", "@types/node": "^20.0.0" }
+}
