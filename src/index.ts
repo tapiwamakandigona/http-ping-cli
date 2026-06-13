@@ -17,22 +17,43 @@ async function ping(url: string): Promise<PingResult> {
   }
 }
 
+function printUsage(): void {
+  console.log("Usage: http-ping <url...>");
+  console.log("  --repeat N   Repeat N times (default: 1)");
+  console.log("  --interval S Seconds between pings (default: 1)");
+  console.log("  --help       Show this help message");
+}
+
 async function main() {
   const args = process.argv.slice(2);
-  if (args.length === 0) {
-    console.log("Usage: http-ping <url...>");
-    console.log("  --repeat N   Repeat N times (default: 1)");
-    console.log("  --interval S Seconds between pings (default: 1)");
+  if (args.length === 0 || args.includes("--help")) {
+    printUsage();
     process.exit(0);
   }
 
   const repeatIdx = args.indexOf("--repeat");
   const repeat = repeatIdx >= 0 ? parseInt(args[repeatIdx + 1]) : 1;
+  if (Number.isNaN(repeat) || repeat < 1) {
+    console.error("Error: --repeat requires a positive integer");
+    process.exit(1);
+  }
+
   const intervalIdx = args.indexOf("--interval");
   const interval = intervalIdx >= 0 ? parseFloat(args[intervalIdx + 1]) : 1;
+  if (Number.isNaN(interval) || interval < 0) {
+    console.error("Error: --interval requires a non-negative number");
+    process.exit(1);
+  }
+
   const urls = args.filter((a, i) => !a.startsWith("--") && 
     (repeatIdx < 0 || i !== repeatIdx + 1) && 
     (intervalIdx < 0 || i !== intervalIdx + 1));
+
+  if (urls.length === 0) {
+    console.error("Error: at least one URL is required");
+    printUsage();
+    process.exit(1);
+  }
 
   for (let i = 0; i < repeat; i++) {
     if (i > 0) await new Promise(r => setTimeout(r, interval * 1000));
